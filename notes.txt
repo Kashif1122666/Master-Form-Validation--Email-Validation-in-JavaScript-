@@ -1,0 +1,96 @@
+chapter 86- Form validation : email
+
+Validating an email field includes checking to make sure there are no illegal characters,
+like spaces, and that all the essentials of a legal email address are there: one or more
+characters, followed by @, followed by one or more characters, followed by a dot, followed
+by two to four characters. The standard way to test for all this is to match the user's entry with
+a regular expression. Regular expressions are beyond the scope of this book, but I'll give you a
+taste of them at the end of the chapter. Meanwhile, here's how to head off many user errors by
+using indexOf.
+
+
+checking for spaces, which are illegal in an email address.
+1 function validateEmail() {
+2 var eEntered = document.getElementById("email").value;
+3 if (eEntered.indexOf(" ") !== -1) {
+4 alert("No spaces allowed in address");
+5 return false;
+6 }
+7 }
+
+Line 3 is the key here. If the index of the illegal space character is anything other than -1,
+it means the character is in there somewhere, and an alert displays.
+If you wanted to, you could test for the presence of all the other illegal characters the
+same way. But in that case, you'd be better off using a regular expression, as I show at the end
+of this chapter
+
+In an email address
+you want to see the @ sign at least one character from the beginning
+of the string and no closer to the end of the string than 5 characters away. Here's a line that
+adds this test to the example function.
+1 function validateEmail() {
+2 var addressIsLegal = true;
+3 var eEntered = document.getElementById("address").value;
+4 if (eEntered.indexOf(" ") !== -1) {
+5 addressIsLegal = false;
+6 }
+7 if (eEntered.indexOf("@") < 1 || eEntered.indexOf("@") > eEntered.length - 6) {
+8 addressIsLegal = false;
+9 }
+10 if (addressIsLegal === false) {
+11 alert("Please correct email address");
+12 return false;
+13 }
+14 }
+About line 7: The first part, left of the pipes, tests whether the character is at the
+beginning of the address, which would be illegal. The second part, right of the pipes, tests
+whether there are fewer than 4 characters following the character. Since there must be at least
+275
+one character for the domain name plus a dot plus at least two characters for the extension,
+fewer than 4 characters following the @ would be illegal.
+
+Finally, I'll add a test for the dot that needs to be at least 1 character away from the "@"
+and have 2 to 4 characters following it
+1 function validateEmail() {
+2 var addressIsLegal = true;
+3 var eEntered = document.getElementById("address").value;
+4 if (eEntered.indexOf(" ") !== -1) {
+5 addressIsLegal = false;
+6 }
+7 if (eEntered.indexOf("@") < 1 || eEntered.indexOf("@") > eEntered.length - 5) {>
+8 addressIsLegal = false;
+9 }
+10 if (eEntered.indexOf(".") - eEntered.indexOf("@") < 2 ||
+eEntered.indexOf(".") > eEntered.length - 3) {
+11 addressIsLegal = false;
+12 }
+13 if (addressIsLegal === false) {
+14 alert("Please correct email address");
+15 return false;
+16 }
+14 }
+Line 10: There must be at least one character between the dot and the @. The first part,
+left of the pipes, tests whether that one character (or more) is missing, which would be illegal.
+There must also be at least 2 characters following the dot. The second part, right of the pipes,
+tests whether there are fewer than 2 characters following the character, which would be
+illegal.
+
+
+All of the tests shown above, and more besides, can be incorporated into a single regular
+expression test. A regular expression expresses a pattern that, in this case, the user's entry must
+match in order to validate. If you're familiar with the wildcard operator, *, which stands for
+"any combination of characters of any length," that's the general idea. But regular expressions
+go far beyond the wildcard operator.
+Regular expressions warrant a book of their own, and are beyond the scope of this book.
+But, to give you a taste of how powerful (and succinct!) they can be, here's an example. It tests
+for all the illegalities that the code above checks for, and more. (This won't be covered in the
+exercises for the chapter, so don't try to memorize anything in the example.)
+1 function validateEmail() {
+2 var eEntered = document.getElementById("address").value;
+3 var regex = /^[\w\-\.\+]+\@[a-zA-Z0-9\. \-]+\.[a-zA-z0-9]{2,4}$/;
+4 if (!(eEntered.match(emailCorrectPattern))) {
+5 alert("Please correct email address");
+6 return false;
+7 }
+8 }
+
